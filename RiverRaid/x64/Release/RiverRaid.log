@@ -1,0 +1,35 @@
+﻿  GraveRaider.cpp
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\renderer.hpp(20,21): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\renderer.hpp(20,21): warning C4244: 'initializing': conversion from 'float' to 'const int', possible loss of data
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\renderer.hpp(22,24): warning C4018: '>=': signed/unsigned mismatch
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\renderer.hpp(30,25): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\renderer.hpp(30,25): warning C4244: 'initializing': conversion from 'float' to 'const int', possible loss of data
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\renderer.hpp(32,28): warning C4018: '>=': signed/unsigned mismatch
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\GraveRaider.hpp(151,27): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\GraveRaider.hpp(151,27): warning C4244: 'initializing': conversion from 'float' to 'const int', possible loss of data
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\GraveRaider.hpp(175,25): warning C4018: '>=': signed/unsigned mismatch
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\GraveRaider.cpp(38,52): warning C4244: 'initializing': conversion from 'unsigned int' to 'float', possible loss of data
+  Generating code
+  2 of 428 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  RiverRaid.vcxproj -> C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\x64\Release\RiverRaid.exe

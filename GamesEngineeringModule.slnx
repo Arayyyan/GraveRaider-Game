@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="RiverRaid/RiverRaid.vcxproj" Id="8179b24d-3415-4006-a6f0-3f344d2c5f2e" />
+</Solution>
