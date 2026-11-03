@@ -37,8 +37,23 @@ void Renderer_draw_image(GamesEngineeringBase::Window& window,
 
             const unsigned int pixelIndex = (row * image.width + col) * image.channels;
 
-            if (image.channels == 3 || image.data[pixelIndex + 3] != 0)
-            {
+            bool shouldDraw = false;
+            if (image.channels == 4) {
+                if (image.data[pixelIndex + 3] != 0) {
+                    shouldDraw = true;
+                }
+            }
+            else {
+                unsigned char r = image.data[pixelIndex];
+                unsigned char g = image.data[pixelIndex + 1];
+                unsigned char b = image.data[pixelIndex + 2];
+                if (!(r < 10 && g < 10 && b < 10)) {
+                    shouldDraw = true;
+                }
+
+            }
+
+            if (shouldDraw) {
                 window.draw(x, y, &image.data[pixelIndex]);
             }
         }

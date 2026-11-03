@@ -26,6 +26,7 @@ class WorldEntity : public VisualEntity {
 
     public:
     static constexpr int kTileType = 6;
+    static constexpr int kNumWalls = 4;
     static constexpr int kWorldHeight = 1000;
 
     WorldEntity(const Vec2f&pos, int view_height) 
@@ -47,6 +48,12 @@ class WorldEntity : public VisualEntity {
             alphas[i].load(alpha_filename);
         }
 
+        for (int i = 0; i < kNumWalls; ++i) {
+            std::string wall_filename = "./Resources/Wall" + std::to_string(i + 1) + ".png";
+            std::cout << "Loading wall image: " << wall_filename << std::endl;
+            walls[i].load(wall_filename);
+        }
+
         // all tiles share the same height, so take it from the first loaded image
         tile_height_ = static_cast<int>(tiles[0].height);
 
@@ -65,6 +72,19 @@ class WorldEntity : public VisualEntity {
         }
         std::cout << std::endl;
      
+    }
+
+    bool IsSolid(float world_x, float world_y) const {
+        const int tile_size = 32;
+        int tile_x = static_cast<int>(floorf(world_x / tile_size));
+        int tile_y = static_cast<int>(floorf(world_y / tile_size));
+
+        int map_index = (tile_x + tile_y * 73);
+        map_index = ((map_index % kWorldHeight) + kWorldHeight) % kWorldHeight;
+
+        int t = world[map_index];
+
+        return (t >= 10);
     }
 
     virtual bool load(std::string filename) {
@@ -136,14 +156,29 @@ class WorldEntity : public VisualEntity {
                 map_index = ((map_index % kWorldHeight) + kWorldHeight) % kWorldHeight;
 
                 int t = world[map_index];
-                t = clamp_value(t, 0, kTileType - 1);
+                //t = clamp_value(t, 0, kTileType - 1);
 
                 float screen_x = (tile_x * tile_size) - camera_pos.x_;
                 float screen_y = (tile_y * tile_size) - camera_pos.y_;
 
+                int floor_t = clamp_value(t >= 10 ? 0 : t, 0, kTileType - 1);
                 Renderer_draw_image(window, { screen_x, screen_y }, tiles[t]);
+
+                if (t >= 10) {
+                    int wall_index = (t - 10) % kNumWalls;
+
+                    float wall_screen_y = screen_y - (walls[wall_index].height - tile_size);
+                    Renderer_draw_image(window, { screen_x, screen_y }, walls[wall_index]);
+                }
+                
             }
         }
+    }
+
+    void SetTile(int tile_x, int tile_y, int tile_id) {
+        int map_index = (tile_x + tile_y * 73);
+        map_index = ((map_index % kWorldHeight) + kWorldHeight) % kWorldHeight;
+        world[map_index] = tile_id;
     }
 
     bool IsLand(const Vec2f& screen_point) {
@@ -162,32 +197,6 @@ class WorldEntity : public VisualEntity {
         return world[((tile_index % kWorldHeight) + kWorldHeight) % kWorldHeight];
     }
 
-    // draw a line across the collisions
-    void DrawCollisionLine(GamesEngineeringBase::Window& window, 
-            const Vec2f& start, 
-            int length) 
-    {
-        // HERE 
-        //return;
-
-
-        const int y = static_cast<int>(start.y_);
-        if ( y < 0 || y >= window.getHeight()) return;
-
-        for ( int i = 0; i<length; i++ ) {
-            const int x = static_cast<int>(start.x_) + i;
-            if (x < 0 || x >= static_cast<int>(window.getWidth()))
-            {
-                continue;
-            }
-
-            if (IsLand({static_cast<float>(x), start.y_}))
-                window.draw(x, y, 255, 0, 0);
-            else
-                window.draw(x, y, 0, 255, 0);
-        }
-    }
-
 
     void SetScrollSpeed(float speed) {
         scroll_speed = speed;
@@ -197,6 +206,7 @@ class WorldEntity : public VisualEntity {
     private:
     // Private member variables for storing the tiles
     GamesEngineeringBase::Image tiles[kTileType];
+    GamesEngineeringBase::Image walls[kNumWalls];
     GamesEngineeringBase::Image alphas[kTileType];
 
     int world[kWorldHeight];

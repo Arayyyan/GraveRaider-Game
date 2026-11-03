@@ -171,11 +171,16 @@
     <Image Include="Resources\alpha4.png" />
     <Image Include="Resources\alpha5.png" />
     <Image Include="Resources\background.png" />
+    <Image Include="Resources\enemy_front.png" />
     <Image Include="Resources\L.png" />
     <Image Include="Resources\L2.png" />
     <Image Include="Resources\player_back.png" />
     <Image Include="Resources\player_front.png" />
     <Image Include="Resources\player_side.png" />
+    <Image Include="Resources\Wall1.png" />
+    <Image Include="Resources\Wall2.png" />
+    <Image Include="Resources\Wall3.png" />
+    <Image Include="Resources\Wall4.png" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="Resources\explosion.wav" />
