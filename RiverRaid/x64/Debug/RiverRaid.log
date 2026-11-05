@@ -1,0 +1,29 @@
+﻿  Camera.hpp
+  World.cpp
+  GraveRaider.cpp
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\renderer.hpp(20,21): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\renderer.hpp(20,21): warning C4244: 'initializing': conversion from 'float' to 'const int', possible loss of data
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\renderer.hpp(22,24): warning C4018: '>=': signed/unsigned mismatch
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\renderer.hpp(30,25): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\renderer.hpp(30,25): warning C4244: 'initializing': conversion from 'float' to 'const int', possible loss of data
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\renderer.hpp(32,28): warning C4018: '>=': signed/unsigned mismatch
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\GraveRaider.hpp(187,27): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'GraveRaider.cpp')
+  
+C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\RiverRaid\GraveRaider.hpp(187,27): warning C4244: 'initializing': conversion from 'float' to 'const int', possible loss of data
+  (compiling source file 'GraveRaider.cpp')
+  
+  Generating Code...
+  RiverRaid.vcxproj -> C:\Users\Shuri\OneDrive\Desktop\Games Engineering first project\GamesEngineeringModule\x64\Debug\RiverRaid.exe

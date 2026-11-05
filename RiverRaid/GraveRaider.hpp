@@ -26,7 +26,6 @@ class WorldEntity : public VisualEntity {
 
     public:
     static constexpr int kTileType = 6;
-    static constexpr int kNumWalls = 4;
     static constexpr int kWorldHeight = 1000;
 
     WorldEntity(const Vec2f&pos, int view_height) 
@@ -48,11 +47,9 @@ class WorldEntity : public VisualEntity {
             alphas[i].load(alpha_filename);
         }
 
-        for (int i = 0; i < kNumWalls; ++i) {
-            std::string wall_filename = "./Resources/Wall" + std::to_string(i + 1) + ".png";
-            std::cout << "Loading wall image: " << wall_filename << std::endl;
-            walls[i].load(wall_filename);
-        }
+        wallTile.load("./Resources/Wall2.png");
+
+       
 
         // all tiles share the same height, so take it from the first loaded image
         tile_height_ = static_cast<int>(tiles[0].height);
@@ -79,12 +76,13 @@ class WorldEntity : public VisualEntity {
         int tile_x = static_cast<int>(floorf(world_x / tile_size));
         int tile_y = static_cast<int>(floorf(world_y / tile_size));
 
-        int map_index = (tile_x + tile_y * 73);
+        int map_index = (tile_x + tile_y * 32);
         map_index = ((map_index % kWorldHeight) + kWorldHeight) % kWorldHeight;
 
         int t = world[map_index];
 
-        return (t >= 10);
+        return(t >= 10);
+
     }
 
     virtual bool load(std::string filename) {
@@ -104,14 +102,15 @@ class WorldEntity : public VisualEntity {
 
             int tile_id;
             std::istringstream iss(line);
-            if (!(iss >> tile_id))
-            {
-                break;
+            while (iss >> tile_id) {
+                if (iss >> tile_id)
+                {
+                    world[n++] = tile_id;
+                }
             }
-            world[n++]=tile_id;
-
-            std::cout << "Got tile_id: " << n << " "<< tile_id << std::endl;
+  
         }
+        std::cout << "successfully loaded " << n << "tiles from " << filename << std::endl;
         return true;
     }
 
@@ -152,7 +151,7 @@ class WorldEntity : public VisualEntity {
                 int tile_x = start_tile_x + x;
                 int tile_y = start_tile_y + y;
 
-                int map_index = (tile_x + tile_y * 73);
+                int map_index = (tile_x + tile_y * 32);
                 map_index = ((map_index % kWorldHeight) + kWorldHeight) % kWorldHeight;
 
                 int t = world[map_index];
@@ -161,22 +160,24 @@ class WorldEntity : public VisualEntity {
                 float screen_x = (tile_x * tile_size) - camera_pos.x_;
                 float screen_y = (tile_y * tile_size) - camera_pos.y_;
 
-                int floor_t = clamp_value(t >= 10 ? 0 : t, 0, kTileType - 1);
-                Renderer_draw_image(window, { screen_x, screen_y }, tiles[t]);
-
                 if (t >= 10) {
-                    int wall_index = (t - 10) % kNumWalls;
-
-                    float wall_screen_y = screen_y - (walls[wall_index].height - tile_size);
-                    Renderer_draw_image(window, { screen_x, screen_y }, walls[wall_index]);
+                    Renderer_draw_image(window, { screen_x, screen_y }, tiles[0]);
+                    Renderer_draw_image(window, { screen_x, screen_y }, wallTile);
+                    
                 }
+                else {
+                    int floor_t = clamp_value(t, 0, kTileType - 1);
+                    Renderer_draw_image(window, { screen_x, screen_y }, tiles[floor_t]);
+                }
+
+                
                 
             }
         }
     }
 
     void SetTile(int tile_x, int tile_y, int tile_id) {
-        int map_index = (tile_x + tile_y * 73);
+        int map_index = (tile_x + tile_y * 32);
         map_index = ((map_index % kWorldHeight) + kWorldHeight) % kWorldHeight;
         world[map_index] = tile_id;
     }
@@ -206,7 +207,7 @@ class WorldEntity : public VisualEntity {
     private:
     // Private member variables for storing the tiles
     GamesEngineeringBase::Image tiles[kTileType];
-    GamesEngineeringBase::Image walls[kNumWalls];
+    GamesEngineeringBase::Image wallTile;
     GamesEngineeringBase::Image alphas[kTileType];
 
     int world[kWorldHeight];

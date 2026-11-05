@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\shuri\\onedrive\\desktop\\games engineering first project\\gamesengineeringmodule\\riverraid\\gameentity.hpp",
+        "ProvidedModule": "",
+        "Includes": [
+            "c:\\users\\shuri\\onedrive\\desktop\\games engineering first project\\gamesengineeringmodule\\riverraid\\vec2f.hpp",
+            "c:\\users\\shuri\\onedrive\\desktop\\games engineering first project\\gamesengineeringmodule\\riverraid\\renderer.hpp",
+            "c:\\users\\shuri\\onedrive\\desktop\\games engineering first project\\gamesengineeringmodule\\riverraid\\shapes.hpp"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

@@ -173,7 +173,7 @@ protected:
 
 };
 
-class EnemyEntity : SpriteEntity {
+class EnemyEntity : public SpriteEntity {
 public:
     EnemyEntity()
         : SpriteEntity({0.0f, 0.0f}, "./Resources/enemy_front.png"), active_(false)
@@ -189,8 +189,9 @@ public:
     }
     
     virtual void Update(float delta_time) override {
-        //default update if needed
+        
     }
+    
     void UpdateTowardsPlayer(float delta_time, const Vec2f& player_pos) {
         Vec2f current_pos = GetPosition();
 
@@ -219,7 +220,6 @@ public:
     void takeDamage(int amount) {
         health_ -= amount;
         if (health_ < 0) {
-            health_ = 0;
             active_ = false;
         }
     }

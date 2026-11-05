@@ -35,8 +35,13 @@ int main()
             
     // BackgroundEntity background({0, 0});
     //SpriteEntity sprite({ 100, 100 }, "./Resources/player_front.png");
-    HeroEntity hero(Vec2f(100, (window.getHeight() - 128) ) );
+    HeroEntity hero(Vec2f(100.0f, 100.0f));
     WorldEntity world({ 64,64 }, window.getHeight());
+
+    if (!world.load("./Resources/level.txt")) {
+        std::cout << "Failed to load level file" << std::endl;
+    }
+
     static constexpr int kMaxEnemies = 4;
     EnemyEntity enemies[kMaxEnemies];
     float respawn_timer = 0.0f;
@@ -56,10 +61,7 @@ int main()
     //damage cooldown tracker
     float damage_cooldown = 0.0f;
   
-    //wall test
-    world.SetTile(5, 20, 10);
-    world.SetTile(5, 21, 10);
-    world.SetTile(5, 22, 10);
+    
 
     Camera camera(static_cast<float>(window.getWidth()), static_cast<float>(window.getHeight()));
     //world.load("./Resources/level.txt");
@@ -104,21 +106,27 @@ int main()
         Vec2f current_pos = hero.GetPosition();
         Vec2f velocity = hero.GetInputAxis() * 250.0f * delta_time;
 
+        
+        //x movement test
         Vec2f next_x_pos = current_pos + Vec2f{ velocity.x_, 0.0f };
 
-        //Test x movement independently
-        if (!world.IsSolid(next_x_pos.x_ + hero.GetImageWidth() / 2.0f, next_x_pos.y_ + hero.GetImageHeight() / 2.0f)) {
+        float cx = next_x_pos.x_ + hero.GetImageWidth() / 2.0f;
+        float cy = current_pos.y_ + hero.GetImageHeight() / 2.0f;
+
+        if (!world.IsSolid(cx, cy)) {
             current_pos.x_ = next_x_pos.x_;
         }
-
-        //Test y movement indfepndently
+        //y movement test
         Vec2f next_y_pos = current_pos + Vec2f{ 0.0f, velocity.y_ };
 
-        if (!world.IsSolid(next_y_pos.x_ + hero.GetImageWidth() / 2.0f, next_y_pos.y_ + hero.GetImageHeight() / 2.0f)) {
+        cx = current_pos.x_ + hero.GetImageWidth() / 2.0f;
+        cy = next_y_pos.y_ + hero.GetImageHeight() / 2.0f;
+
+        if (!world.IsSolid(cx, cy)) {
             current_pos.y_ = next_y_pos.y_;
         }
-        
         hero.SetPosition(current_pos);
+        
 
         //first projectile on 'E' key
         if (attack_cooldown > 0.0f) attack_cooldown -= delta_time;
