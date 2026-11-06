@@ -18,6 +18,7 @@
 #include "GameEntity.hpp"
 #include "GraveRaider.hpp"
 #include "Camera.hpp"
+#include "TitleScreen.hpp"
 
 
 // -----------------------------------------------------------
@@ -31,8 +32,10 @@ int main()
 
     GamesEngineeringBase::Window window;
     window.create(1024, 800, "GraveRaider", false);
-    
-            
+
+    GameState current_state = GameState::TitleScreen;
+    TitleScreen titleScreen;
+
     // BackgroundEntity background({0, 0});
     //SpriteEntity sprite({ 100, 100 }, "./Resources/player_front.png");
     HeroEntity hero(Vec2f(100.0f, 100.0f));
@@ -44,24 +47,19 @@ int main()
 
     static constexpr int kMaxEnemies = 4;
     EnemyEntity enemies[kMaxEnemies];
-    float respawn_timer = 0.0f;
-    bool waiting_for_respawn = false;
-
-    enemies[0].Spawn(Vec2f(400.0f, 300.0f));
-    enemies[1].Spawn(Vec2f(400.0f, 300.0f));
-    enemies[2].Spawn(Vec2f(400.0f, 300.0f));
-    enemies[3].Spawn(Vec2f(400.0f, 300.0f));
-
     
+    float enemy_spawn_timer = 3.0f;
+
+
     //projectile container
     static constexpr int kMaxProjectiles = 10;
     ProjectileEntity projectiles[kMaxProjectiles];
     float attack_cooldown = 0.0f;
-    
+
     //damage cooldown tracker
     float damage_cooldown = 0.0f;
-  
-    
+
+
 
     Camera camera(static_cast<float>(window.getWidth()), static_cast<float>(window.getHeight()));
     //world.load("./Resources/level.txt");
@@ -76,17 +74,32 @@ int main()
 
         if (window.keyPressed(VK_ESCAPE)) break;
 
+        if (current_state == GameState::TitleScreen) {
+            titleScreen.Draw(window);
+
+            // Check for button click or Enter key
+            if (window.keyPressed(VK_RETURN) || titleScreen.isPlayButtonClicked(window)) {
+                std::cout << "SUCCESS: Switching to Playing state!" << std::endl;
+                current_state = GameState::Playing;
+            }
+
+            window.present();
+            running = !window.keyPressed(VK_ESCAPE);
+
+            continue;
+        }
+
         Vec2f input{ 0, 0 };
         if (window.keyPressed('W')) input.y_ = -1.0f;
         if (window.keyPressed('S')) input.y_ = 1.0f;
         if (window.keyPressed('A')) input.x_ = -1.0f;
         if (window.keyPressed('D')) input.x_ = 1.0f;
-		
-        if (window.keyPressed(VK_LSHIFT)) 
+
+        if (window.keyPressed(VK_LSHIFT))
         {
             world.SetScrollSpeed(5.0f);
         }
-        else 
+        else
         {
             world.SetScrollSpeed(1.0f);
         }
@@ -106,7 +119,7 @@ int main()
         Vec2f current_pos = hero.GetPosition();
         Vec2f velocity = hero.GetInputAxis() * 250.0f * delta_time;
 
-        
+
         //x movement test
         Vec2f next_x_pos = current_pos + Vec2f{ velocity.x_, 0.0f };
 
@@ -126,18 +139,13 @@ int main()
             current_pos.y_ = next_y_pos.y_;
         }
         hero.SetPosition(current_pos);
-        
+
 
         //first projectile on 'E' key
         if (attack_cooldown > 0.0f) attack_cooldown -= delta_time;
 
         if (window.keyPressed('E') && attack_cooldown <= 0.0f) {
-            Vec2f shoot_dir = { 0.0f, -1.0f };
-            Vec2f input = hero.GetInputAxis();
-            if (input.x_ != 0.0f || input.y_ != 0.0f) {
-                shoot_dir = input;
-            }
-
+            Vec2f shoot_dir = hero.GetFacingDirection();
             Vec2f spawn_pos = hero.GetCollisionPoint();
 
             for (int i = 0; i < kMaxProjectiles; ++i) {
@@ -147,7 +155,7 @@ int main()
                     break;
                 }
             }
-            
+
         }
 
         for (int i = 0; i < kMaxProjectiles; ++i) {
@@ -180,7 +188,7 @@ int main()
                     }
                 }
             }
-            
+
         }
 
         bool any_enemy_alive = false;
@@ -188,7 +196,49 @@ int main()
             if (enemies[e].isAlive()) {
                 any_enemy_alive = true;
 
-                enemies[e].UpdateTowardsPlayer(delta_time, hero.GetPosition());
+                Vec2f enemy_pos = enemies[e].GetPosition();
+                Vec2f player_pos = hero.GetPosition();
+                Vec2f direction = player_pos - enemy_pos;
+
+                for (int other = 0; other < kMaxEnemies; ++other) {
+                    if (e != other && enemies[other].isAlive()) {
+                        Vec2f other_pos = enemies[other].GetPosition();
+                        Vec2f diff = enemy_pos - other_pos;
+                        float dist = sqrtf((diff.x_ * diff.x_) + (diff.y_ * diff.y_));
+                        if (dist > 0.0f && dist < 45.0f) {
+                            diff.x_ /= dist;
+                            diff.y_ /= dist;
+                            enemy_pos = enemy_pos + (diff * 2.0f);
+                        }
+                    }
+                }
+
+                float length = sqrtf((direction.x_ * direction.x_) + (direction.y_ * direction.y_));
+                if (length > 1.0f) {
+                    direction.x_ /= length;
+                    direction.y_ /= length;
+
+                    Vec2f velocity = direction * enemies[e].GetSpeed() * delta_time;
+
+                    Vec2f next_x_pos = enemy_pos + Vec2f{ velocity.x_, 0.0f };
+                    float cx = next_x_pos.x_ + enemies[e].GetImageWidth() / 2.0f;
+                    float cy = enemy_pos.y_ + enemies[e].GetImageHeight() / 2.0f;
+                    if (!world.IsSolid(cx, cy)) {
+                        enemy_pos.x_ = next_x_pos.x_;
+                    }
+
+                    Vec2f next_y_pos = enemy_pos + Vec2f{ 0.0f, velocity.y_ };
+                    cx = enemy_pos.x_ + enemies[e].GetImageWidth() / 2.0f;
+                    cy = next_y_pos.y_ + enemies[e].GetImageHeight() / 2.0f;
+                    if (!world.IsSolid(cx, cy)) {
+                        enemy_pos.y_ = next_y_pos.y_;
+                    }
+
+                    enemies[e].SetPosition(enemy_pos);
+                }
+                else {
+                    enemies[e].SetPosition(enemy_pos);
+                }
 
                 Vec2f hero_center = hero.GetCollisionPoint();
                 Vec2f enemy_center = enemies[e].GetCollisionPoint();
@@ -209,36 +259,49 @@ int main()
         }
 
         if (!any_enemy_alive) {
-            if (!waiting_for_respawn) {
-                waiting_for_respawn = true;
-                respawn_timer = 3.0f;
+            enemy_spawn_timer -= delta_time;
+            if (enemy_spawn_timer <= 0.0f) {
+                for (int e = 0; e < kMaxEnemies; ++e) {
+                    if (!enemies[e].isAlive()) {
+                        Vec2f h_pos = hero.GetPosition();
+
+                        Vec2f offsets[8] = {
+                            Vec2f(-150.0f,    0.0f),
+                            Vec2f(150.0f,    0.0f),
+                            Vec2f(0.0f, -150.0f),
+                            Vec2f(0.0f,  150.0f),
+                            Vec2f(-120.0f, -120.0f),
+                            Vec2f(120.0f, -120.0f),
+                            Vec2f(-120.0f,  120.0f),
+                            Vec2f(120.0f,  120.0f)
+                        };
+
+                        Vec2f spawn_pos = h_pos + Vec2f(0.0f, -100.0f);
+                        for (int i = 0; i < 8; ++i) {
+                            int idx = (e + i) % 8;
+                            Vec2f test_pos = h_pos + offsets[idx];
+
+                            float cx = test_pos.x_ + enemies[e].GetImageWidth() / 2.0f;
+                            float cy = test_pos.y_ + enemies[e].GetImageHeight() / 2.0f;
+
+                            if (!world.IsSolid(cx, cy)) {
+                                spawn_pos = test_pos;
+                                break;
+                            }
+                        }
+
+                        enemies[e].Spawn(spawn_pos);
+                        enemy_spawn_timer = 2.0f;
+                        break;
+                    }
+                }
             }
         }
-        
-        if (waiting_for_respawn) {
-            respawn_timer -= delta_time;
-            if (respawn_timer <= 0.0f) {
-                Vec2f h_pos = hero.GetPosition();
 
-                enemies[0].Spawn(h_pos + Vec2f(-200.0f, -200.0f));
-                enemies[1].Spawn(h_pos + Vec2f(-200.0f, -200.0f));
-                enemies[2].Spawn(h_pos + Vec2f(-200.0f, -200.0f));
-                enemies[3].Spawn(h_pos + Vec2f(-200.0f, -200.0f));
-
-                waiting_for_respawn = false;
-                
-            }
-        }
-
-        
-        
         camera.Follow(hero.GetPosition());
         world.Update(delta_time);
 
-        // background.Draw(window);
         world.Draw(window, camera.GetPosition());
-
-        //sprite.Draw(window);
         hero.Draw(window, camera.GetPosition());
 
         for (int e = 0; e < kMaxEnemies; ++e) {
@@ -246,20 +309,17 @@ int main()
                 enemies[e].Draw(window, camera.GetPosition());
             }
         }
-        
+
         for (int i = 0; i < kMaxProjectiles; ++i) {
             projectiles[i].Draw(window, camera.GetPosition());
         }
 
+        
         window.present();
         running = !window.keyPressed(VK_ESCAPE);
-
-		std::cout << "FPS: " << 1.0f / delta_time << std::endl;
-
+        std::cout << "FPS: " << 1.0f / delta_time << std::endl;
     }
-
 
     return 0;
 }
-
 // ----------------------------------------------------------------------

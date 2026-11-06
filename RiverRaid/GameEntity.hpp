@@ -51,16 +51,24 @@ public:
 
         if (input.y_ < 0.0f) {
             currentDirection = 1;
+            facingDir_ = { 0.0f, -1.0f }; //facing up
         }
         else if (input.y_ > 0.0f) {
             currentDirection = 0;
+            facingDir_ = { 0.0f, 1.0f };  //facing down
         }
-        else if (input.x_ != 0.0f) {
+
+        if (input.x_ < 0.0f) {
             currentDirection = 2;
+            facingDir_ = { -1.0f, 0.0f }; //facing left
+        }
+        else if (input.x_ > 0.0f) {
+            currentDirection = 2;
+            facingDir_ = { 1.0f, 0.0f };  //facing right
         }
     }
     const Vec2f & GetInputAxis() const { return inputAxis_; }
-
+    const Vec2f& GetFacingDirection() const { return facingDir_; }
     
     virtual void Update(float delta_time) override{
         
@@ -163,6 +171,7 @@ public:
 protected:
     float speed_ = 250.0f; // Example speed value
     Vec2f inputAxis_{0.0f, 0.0f};
+    Vec2f facingDir_{ 0.0f, 1.0f };
     Circle collisionCircle_{16.0f};
 
     GamesEngineeringBase::Image frontImage;
@@ -191,6 +200,8 @@ public:
     virtual void Update(float delta_time) override {
         
     }
+
+    float GetSpeed() const { return speed_; }
     
     void UpdateTowardsPlayer(float delta_time, const Vec2f& player_pos) {
         Vec2f current_pos = GetPosition();

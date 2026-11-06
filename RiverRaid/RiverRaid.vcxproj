@@ -147,6 +147,7 @@
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="GameEntity.hpp" />
     <ClInclude Include="GamesEngineeringBase.h" />
+    <ClInclude Include="TitleScreen.hpp" />
     <ClInclude Include="World.h" />
     <ClInclude Include="renderer.hpp" />
     <ClInclude Include="resource.h" />
